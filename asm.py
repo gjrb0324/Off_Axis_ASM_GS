@@ -71,12 +71,10 @@ def FFT(im):
     fshift = fshift*filtered
     ifftd = np.roll(fshift,(-(cen_x-1024),-(cen_y-1024)),axis=(1,0))
     ifftd = np.fft.ifftshift(ifftd)
-    #ifftd[2043:2045,2044:2046] = ifftd[2024:2026,2024:2026]
     ifftd = np.fft.ifft2(ifftd)
 
     return img,f,  fftd, ifftd, center
 def AS(recon_field, prop_len):
-    #padded = np.pad(recon_field,((512,512),(512,512)))
     f = np.fft.fft2(recon_field)
     fshift = np.fft.fftshift(f)
     with Pool() as pool:
@@ -93,7 +91,6 @@ def AS(recon_field, prop_len):
 def plotting(img, fftd, recon, centers, zr):
     fig, ((ax1,ax2),(ax3,ax4)) = plt.subplots(2,2)
     ax1.set_title('Original Image')
-    #img = img[1200:1261,1510:1571]
     ax1.imshow(img,cmap='gray')
 
     ax2.set_title('Fourier Transformed')
@@ -107,14 +104,12 @@ def plotting(img, fftd, recon, centers, zr):
 
     ax3.set_title('Reconsturcted- Amplitude')
     amplitude_recon = abs(recon)
-    amplitude_recon = amplitude_recon#[1140:1200,740:780]
     ax3.imshow(amplitude_recon,cmap='gray')
 
 
     ax4.set_title('Reconstructed- Phase')
     angle = np.angle(recon)
     thickness = angle/((refractive_index-1)*k0)
-    thickness = thickness#[1140:1200,740:780]
     ax4.imshow(thickness)
 
     plt.show()
@@ -147,13 +142,12 @@ def main():
 
     as_recon= AS(recon,2)
     ax2.set_title('Intensity Recon- 200um Front')
-    as_recon_amp = abs(as_recon)#[512:im_len+512,512:im_len+512]
+    as_recon_amp = abs(as_recon)
     ax2.imshow(as_recon_amp[1300:1800,900:1400],cmap='gray')
 
     ax5.set_title('Phase Recon-200um Front')
     as_angle = np.angle(as_recon)
     as_thickness = as_angle/((refractive_index-1)*k0)
-    as_thickness = as_thickness#[512:im_len+512,512:im_len+512]
     ax5.imshow(as_thickness[1300:1800,900:1400])
 
 

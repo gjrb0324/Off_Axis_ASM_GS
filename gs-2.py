@@ -51,7 +51,6 @@ def OFFAXIS(im):
     fshift = fshift*filtered
     ifftd = np.roll(fshift,(-(cen_x-1024),-(cen_y-1024)),axis=(1,0))
     ifftd = np.fft.ifftshift(ifftd)
-    #ifftd[2043:2045,2044:2046] = ifftd[2024:2026,2024:2026]
     ifftd = np.fft.ifft2(ifftd)
 
     return ifftd
@@ -89,18 +88,8 @@ def GS(img_0,img_1):
     global im_len
     src_amp = np.sqrt(img_0)
     trg_amp=np.sqrt(img_1)
-    #Random phase from uniform distribution
-    #src_phs=np.random.randn(512,512)
-    #src_phs=np.zeros((512,512))
-    #src_phs = np.pad(src_phase,((256,256),(256,256)))
     loss = []
     pbar = tqdm(range(0,30))
-    #Save unit propagation matrix for computation speed
-    #with Pool() as pool:
-    #    prop_matrix = pool.map(prop,range(0,1024*1024))
-    #prop_matrix=np.reshape(prop_matrix,(1024,1024))
-    #prop_matrix_front=np.power(prop_matrix,0.1)
-    #prop_matrix_back=np.power(prop_matrix,-0.1)
     wave_e = AS(trg_amp,0.1)
     for i in pbar:
         wave = src_amp*np.exp(1j*np.angle(wave_e))
@@ -109,10 +98,8 @@ def GS(img_0,img_1):
         wave_e  = AS(wave,0.1)
         ang = np.angle(wave_e)
         thickness = ang/(0.355*k0)
-        #if i ==16:
         plt.imshow(thickness)
-        plt.pause(0.1)
-        #plt.savefig(str(i)+'-result')
+        plt.pause(0.5)
     plt.show()
 
     src_phs = np.angle(wave_e)
@@ -136,8 +123,6 @@ def main():
     img_height, img_width = np.shape(im_0)
     global im_len
     im_len= min(img_height,img_width)
-    #img_0=im_0[0:im_len,0:im_len]
-    #img_1=im_1[0:im_len,0:im_len]
     img_0=im_0[1300:1812,850:1362]
     img_1=im_1[1300:1812,850:1362]
     src_amp, src_phs = GS(img_0,img_1)
